@@ -48,23 +48,53 @@ app.use(express.urlencoded({extended: true}))
 
 
 // Om Views weer te geven, heb je Routes nodig
-// Maak een GET route voor de index
+// Maak een GET route voor de homepage
+// Deze functie wordt dus uitgevoerd als de browser naar /?sorteer=andersom gaat
 app.get('/', async function (request, response) {
 
   // Haal alle personen uit de WHOIS API op, van dit jaar, gesorteerd op naam
   const params = {
-    // Sorteer op naam
-    'sort': 'name',
+    // Geef de sortering nog niet mee, maar later
 
     // Geef aan welke data je per persoon wil terugkrijgen
     'fields': '*,squads.*',
 
     // Combineer meerdere filters
-    'filter[squads][squad_id][tribe][name]': 'FDND Jaar 1',
+    'filter[squads][squad_id][name]': '1I',
+    'filter[squads][squad_id][cohort]': '2526',
+
     // Filter eventueel alleen op een bepaalde squad
     // 'filter[squads][squad_id][name]': '1I',
     // 'filter[squads][squad_id][name]': '1J',
-    'filter[squads][squad_id][cohort]': '2526'
+  }
+
+  // Hier bekijken we welke sortering we mee willen geven aan de API
+  // request.query is een object waar onze query parameters in zitten
+  if (request.query.sorteer == 'name-descending') {
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // Als we op /?sorteer=name-descending zitten, voeg dan sort=-name toe
+    params['sort'] = '-name'
+    //^^^^^^^^^^^^^^^^^^^^^^
+  }
+  
+  if (request.query.sorteer == 'age-descending') {
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // Als we op /?sorteer=age-descending zitten, voeg dan sort=-name toe
+    params['sort'] = 'birthdate'
+    //^^^^^^^^^^^^^^^^^^^^^^
+  }
+  
+  if (request.query.sorteer == 'age-ascending') {
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // Als we op /?sorteer=age-ascending zitten, voeg dan sort=-name toe
+    params['sort'] = '-birthdate'
+    //^^^^^^^^^^^^^^^^^^^^^^
+  }
+  
+  else {
+    // En anders, voeg sort=name toe
+    params['sort'] = 'name'
+    //^^^^^^^^^^^^^^^^^^^^^
   }
   const personResponse = await fetch('https://fdnd.directus.app/items/person/?' + new URLSearchParams(params))
 

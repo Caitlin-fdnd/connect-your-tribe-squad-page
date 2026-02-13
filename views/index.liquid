@@ -4,10 +4,11 @@
   <span class="title-span">Squad 1i</span>
 
   {% for person in persons %}
-    <article class="apartment">
-      <img src="./Raam0.png" alt="raam" class="window">
-      <span class="name">{{ person.name }}</span>
+    <article class="apartment" style="--fav-color: {{ person.fav_color }}">
+      <img src="./Raam1.png" alt="raam" class="window" data-target="info-bubble">
+      <span class="namecard">{{ person.name }} , {{ person.birthdate }}</span>
     </article>
+
   {% endfor %}
 </section>
 
